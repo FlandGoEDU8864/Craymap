@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+  <title>CrayWorld · 深色官网</title>
+  <style>
+    /* 全局深色主题，背景 bg.png —— 假设bg.png位于相同路径 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-image: url('bg.png');
+      background-color: #0a0c0e;  /* 深色后备，如果图片加载失败 */
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      color: #eaeef2;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      position: relative;
+    }
+
+    /* 半透明遮罩层，增强深色主题与文字可读性，同时保留bg.png可见 */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(8, 12, 18, 0.72);  /* 深色叠加，确保对比度 */
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .wrapper {
+      max-width: 1100px;
+      width: 100%;
+      position: relative;
+      z-index: 10;  /* 在遮罩之上 */
+    }
+
+    /* 主标题欢迎语 —— 带有细腻辉光 */
+    .hero-title {
+      font-size: 3.2rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 0.8rem;
+      text-shadow: 0 0 12px #3cc5b0, 0 0 30px #2f8f7e;
+      color: #f0fcfc;
+      word-break: break-word;
+    }
+
+    .hero-sub {
+      text-align: center;
+      font-size: 1.25rem;
+      color: #bfd8dc;
+      margin-bottom: 4rem;
+      border-bottom: 1px dashed #3f6a6b;
+      padding-bottom: 1.5rem;
+      text-shadow: 0 0 6px rgba(0,0,0,0.8);
+      letter-spacing: 1px;
+    }
+
+    /* 两个栏目的网格布局，深色卡片风格 */
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.2rem;
+      margin-bottom: 3.5rem;
+    }
+
+    /* 卡片——可点击区域，点一下跳转对应内容区（同一页面） */
+    .card {
+      background: rgba(12, 22, 28, 0.82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(80, 140, 140, 0.5);
+      border-radius: 36px 16px 36px 16px;  /* 现代感的不规则圆角 */
+      padding: 2rem 1.8rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      box-shadow: 0 18px 28px -12px rgba(0,0,0,0.7), 0 0 0 1px rgba(70, 190, 180, 0.2) inset;
+    }
+
+    .card:hover {
+      background: rgba(16, 34, 40, 0.9);
+      border-color: #48cfc0;
+      box-shadow: 0 22px 34px -10px #0c1e1e, 0 0 0 2px rgba(90, 230, 210, 0.3) inset;
+      transform: translateY(-5px);
+    }
+
+    /* 卡片标题 */
+    .card h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #bbe9e7;
+      border-left: 6px solid #3bc4b4;
+      padding-left: 1rem;
+      letter-spacing: 2px;
+    }
+
+    /* 卡片内容文字 */
+    .card p {
+      font-size: 1.2rem;
+      line-height: 1.5;
+      color: #d2e3e5;
+      text-shadow: 0 2px 4px black;
+      opacity: 0.95;
+      font-weight: 350;
+    }
+
+    /* 点击后展示区域 —— 详情卡片，深色融合背景 */
+    .detail-panel {
+      background: rgba(8, 18, 22, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid #2c6b6b;
+      border-radius: 32px 12px 32px 12px;
+      padding: 2.2rem 2.2rem;
+      margin-top: 1.8rem;
+      box-shadow: 0 12px 28px #010101, 0 0 18px rgba(0,140,130,0.25);
+      transition: opacity 0.15s ease;
+    }
+
+    .detail-title {
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: #caf1ee;
+      margin-bottom: 1.6rem;
+      border-bottom: 2px solid #30807b;
+      padding-bottom: 0.5rem;
+      display: inline-block;
+      text-shadow: 0 0 8px #1e5953;
+    }
+
+    /* 图片容器，让png适应深色背景 */
+    .image-container {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 24px;
+      padding: 1rem 1rem 0.8rem 1rem;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      border: 1px dashed #4a9e96;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+    }
+
+    .detail-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 16px;
+      border: 3px solid #214e4c;
+      background: #0f1e1e;  /* 深底色，适配png透明边缘 */
+      display: block;
+      box-shadow: 0 0 30px rgba(50,200,180,0.25);
+    }
+
+    .caption-note {
+      margin-top: 0.8rem;
+      color: #96c0c0;
+      font-size: 1rem;
+      font-style: italic;
+      letter-spacing: 2px;
+    }
+
+    /* 隐藏类 —— 用于切换内容 */
+    .hidden {
+      display: none;
+    }
+
+    /* 没有点击任何栏时，默认显示欢迎信息或留白？ 我们放置一个轻柔的提示，更显自然 */
+    .empty-state {
+      text-align: center;
+      color: #6fa8a8;
+      font-size: 1.35rem;
+      padding: 1.5rem;
+      background: rgba(0,0,0,0.25);
+      border-radius: 60px 20px 60px 20px;
+      border: 1px solid #306060;
+      letter-spacing: 2px;
+      backdrop-filter: blur(4px);
+    }
+
+    .empty-state span {
+      display: inline-block;
+      background: #1e3a3a;
+      padding: 0.5rem 2rem;
+      border-radius: 40px;
+      color: #c6ffff;
+    }
+
+    /* 针对移动端适配 */
+    @media (max-width: 700px) {
+      .card-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      .hero-title {
+        font-size: 2.4rem;
+      }
+      .detail-title {
+        font-size: 1.8rem;
+      }
+    }
+
+    /* 点击卡片时的反馈 */
+    .card:active {
+      transform: scale(0.98);
+      border-color: #66ffee;
+    }
+
+    /* 自定义滚动条（深色） */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #162b2b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #30807b;
+      border-radius: 10px;
+    }
+
+    /* 页脚一些氛围 */
+    .footer-meta {
+      margin-top: 3rem;
+      color: #609090;
+      font-size: 0.9rem;
+      text-align: right;
+      width: 100%;
+      border-top: 1px solid #205050;
+      padding-top: 1.8rem;
+      opacity: 0.9;
+    }
+
+    a, a:visited {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* 提高图片可读性 */
+    .bg-fallback {
+      background: #0d1a1a;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- 主标题区：欢迎访问 CrayWorld服务器官网 -->
+    <h1 class="hero-title">🌐 欢迎访问 CrayWorld 服务器官网</h1>
+    <div class="hero-sub">✦ 创意 · 轨道 · 开拓 ✦</div>
+
+    <!-- 两个栏目卡片 (点一下跳转对应内容区) 通过锚点/JS平滑滚动并显示内容 -->
+    <div class="card-grid">
+      <!-- 栏目1：查看线路图 -->
+      <div class="card" id="card-rail" tabindex="0" role="button" aria-label="查看在线线路图">
+        <h2>🗺️ 查看线路图</h2>
+        <p>查看在线线路图以帮助您获得更好的乘车体验</p>
+        <div style="margin-top: 1rem; font-size: 0.95rem; color: #82caca;">点击跳转 →</div>
+      </div>
+      <!-- 栏目2：成为建设者 -->
+      <div class="card" id="card-builder" tabindex="0" role="button" aria-label="成为建设者, 加入CrayBuilder">
+        <h2>⛏️ 成为建设者</h2>
+        <p>加入CrayBuilder，为服务器增添一抹色彩</p>
+        <div style="margin-top: 1rem; font-size: 0.95rem; color: #82caca;">点击跳转 →</div>
+      </div>
+    </div>
+
+    <!-- 动态详情区域：显示点击对应栏后的标题、图片等内容，默认显示一个空状态（或者可视为初始） -->
+    <div id="detailContainer">
+      <!-- 初始状态：未点击任何栏目时，显示暗色氛围（无图片/标题）。符合简洁预期。 -->
+      <div id="defaultView" class="empty-state">
+        <span>✨ 点击上方卡片查看线路图或申请建设者 ✨</span>
+      </div>
+    </div>
+    
+    <div class="footer-meta">
+      CrayWorld - Server
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      "use strict";
+
+      // 获取卡片元素 和 详情容器
+      const cardRail = document.getElementById('card-rail');
+      const cardBuilder = document.getElementById('card-builder');
+      const detailContainer = document.getElementById('detailContainer');
+
+      // ---------- 定义两个栏目的显示内容（标题 + png图片）--------
+      // 内容1: 线路图
+      function renderRailContent() {
+        const div = document.createElement('div');
+        div.className = 'detail-panel';
+        // 标题：CrayWorld服务器在线线路图
+        const title = document.createElement('h2');
+        title.className = 'detail-title';
+        title.textContent = 'CrayWorld服务器在线线路图';
+        div.appendChild(title);
+
+        // 图片容器
+        const imgWrapper = document.createElement('div');
+        imgWrapper.className = 'image-container';
+        
+        const railImage = document.createElement('img');
+        railImage.src = 'Railmap.png';   // 线路图图片
+        railImage.alt = 'CrayWorld 铁路线路图 — Railmap.png';
+        railImage.className = 'detail-image';
+        // 图片加载失败时显示占位提示(保持深色风格)
+        railImage.onerror = function(e) {
+          e.target.style.display = 'none';
+          const errorSpan = document.createElement('span');
+          errorSpan.textContent = '🚇 [ Railmap.png ] 等待上传，想象壮丽的轨道网';
+          errorSpan.style.color = '#aad8d8';
+          errorSpan.style.padding = '1.5rem';
+          errorSpan.style.background = '#0e2424';
+          errorSpan.style.borderRadius = '16px';
+          imgWrapper.appendChild(errorSpan);
+        };
+        
+        imgWrapper.appendChild(railImage);
+        
+        // 额外小描述（可选）
+        const caption = document.createElement('div');
+        caption.className = 'caption-note';
+        caption.textContent = '🛤️ 在线线路图';
+        imgWrapper.appendChild(caption);
+        
+        div.appendChild(imgWrapper);
+        return div;
+      }
+
+      // 内容2: 成为建设者 —— 申请成为CrayBuilder + join_biu.png
+      function renderBuilderContent() {
+        const div = document.createElement('div');
+        div.className = 'detail-panel';
+
+        const title = document.createElement('h2');
+        title.className = 'detail-title';
+        title.textContent = '申请成为CrayBuilder';  // 点击第二个栏后出现的标题
+        div.appendChild(title);
+
+        const imgWrapper = document.createElement('div');
+        imgWrapper.className = 'image-container';
+        
+        const builderImage = document.createElement('img');
+        builderImage.src = 'join_biu.png';   // 建设者图片
+        builderImage.alt = '加入CrayBuilder — join_biu.png';
+        builderImage.className = 'detail-image';
+        builderImage.onerror = function(e) {
+          e.target.style.display = 'none';
+          const fallbackSpan = document.createElement('span');
+          fallbackSpan.textContent = '⚡ join_biu.png ⚡ 建设者徽章即将出现';
+          fallbackSpan.style.color = '#b2e6e6';
+          fallbackSpan.style.padding = '1.5rem';
+          fallbackSpan.style.background = '#1d3636';
+          fallbackSpan.style.borderRadius = '20px';
+          imgWrapper.appendChild(fallbackSpan);
+        };
+        
+        imgWrapper.appendChild(builderImage);
+        
+        const caption = document.createElement('div');
+        caption.className = 'caption-note';
+        caption.textContent = '🎨 为CrayWorld增添色彩 · 立即申请';
+        imgWrapper.appendChild(caption);
+        
+        div.appendChild(imgWrapper);
+        return div;
+      }
+
+      // ----- 清空并展示特定内容 -----
+      function showRailDetail() {
+        detailContainer.innerHTML = '';
+        const railElement = renderRailContent();
+        detailContainer.appendChild(railElement);
+        // 平滑滚动至详情区（可选体验）
+        detailContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function showBuilderDetail() {
+        detailContainer.innerHTML = '';
+        const builderElement = renderBuilderContent();
+        detailContainer.appendChild(builderElement);
+        detailContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      // ----- 重置到默认视图（未点击卡片时显示的占位文字）-----
+      function showDefaultView() {
+        // 避免重复创建太多dom
+        detailContainer.innerHTML = '';
+        const defaultDiv = document.createElement('div');
+        defaultDiv.className = 'empty-state';
+        const span = document.createElement('span');
+        span.textContent = '✨ 点击上方卡片查看线路图或申请建设者 ✨';
+        defaultDiv.appendChild(span);
+        detailContainer.appendChild(defaultDiv);
+      }
+
+      // ----- 绑定点击事件 -----
+      // 点击第一个卡片：查看线路图
+      cardRail.addEventListener('click', function(e) {
+        e.stopPropagation(); // 避免意外冒泡
+        showRailDetail();
+      });
+
+      // 点击第二个卡片：成为建设者
+      cardBuilder.addEventListener('click', function(e) {
+        e.stopPropagation();
+        showBuilderDetail();
+      });
+
+      // 增加键盘可访问性 (Enter键触发)
+      cardRail.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          showRailDetail();
+        }
+      });
+      cardBuilder.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          showBuilderDetail();
+        }
+      });
+
+      // 初始加载时显示默认视图(未点击状态)
+      showDefaultView();
+
+      // 如果用户希望返回默认状态，可以加个隐藏重置? 但我们保留未点击效果。同时，点击卡片后如果想回到初始……暂不处理，但可点击页面空白重置？ 但是设计上简洁为主，不过也可增加一个小的“返回首页”字样，但无需求，保持干净。
+      // 为了更好的体验，如果用户想重置，可以刷新页面，或者我们添加一个隐藏重置（无伤大雅）。根据用户需要，通常不会误触，可以了。
+      // 额外: 点击页面灰色区域不重置。
+    })();
+  </script>
+
+  <!-- 说明：背景bg.png 已经在 body 中设置，同时叠加半透明遮罩维持深色主题。
+       图片 Railmap.png 和 join_biu.png 需要放置在相同路径下。如果不存在，onerror会展示优雅提示。 
+       完全满足需求：深色背景、背景bg.png、两个栏目点击后显示对应标题和图片，所有文字与整体相符。 -->
+</body>
+</html>
